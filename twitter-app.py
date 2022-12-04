@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 
 nltk.download('stopwords')
 nltk.download('wordnet')
+nltk.download('omw-1.4')
 
 with open("secrets.txt","r") as f:
     secrets =f.read().splitlines()
@@ -130,16 +131,14 @@ class analyseTweet():
         plt.axis('off')
         plt.show()
 
-    def get_tweet_from_kafka(self,topic,lang,limit=100):
+    def get_tweet_from_kafka(self,topic,lang,limit=100): #TO-DO : verify if the number of tweets is correct
         consumer = KafkaConsumer(topic,bootstrap_servers=['localhost:9092'],auto_offset_reset='earliest')
         for i in range(limit):
             print("Tweet : ",i)
             v = next(iter(consumer)).value
-            
-            if v is not None:
-                tweet = json.loads(v)
-                self.tweet_to_tokens(tweet,lang)
-                print(tweet)
+            tweet = json.loads(v)
+            self.tweet_to_tokens(tweet,lang)
+            print(tweet)
 
 
 # tl = tweetsListener(bearer_token)
@@ -149,5 +148,5 @@ class analyseTweet():
 # tl.get_data_continuously("covid",10,"tweets","en",timeLimit=60,verbose=True)
 
 at = analyseTweet()
-at.get_tweet_from_kafka("tweets","english",limit=10)
+at.get_tweet_from_kafka("tweets","english",limit=30)
 at.most_common_token_to_img()
