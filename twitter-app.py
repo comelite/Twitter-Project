@@ -1,8 +1,25 @@
 from kafka import KafkaProducer
+from kafka import KafkaConsumer
 import tweepy
 import datetime
 import json
 import time
+from nltk.tokenize import RegexpTokenizer
+from nltk.stem import WordNetLemmatizer
+import nltk
+from nltk.corpus import stopwords
+import re
+import string
+from wordcloud import WordCloud
+from PIL import Image
+import json
+import numpy as np
+from PIL import Image
+import json
+import matplotlib.pyplot as plt
+
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 with open("secrets.txt","r") as f:
     secrets =f.read().splitlines()
@@ -57,8 +74,80 @@ class tweetsListener():
             print("Pause ! ", true_end_time < datetime.datetime.utcnow())
             time.sleep(10)
 
-tl = tweetsListener(bearer_token)
+class analyseTweet():
+    def __init__(self):
+        self.tokens = []
+        pass
+
+    def tweet_to_tokens(self,tweet,lang):
+        tokenizer = RegexpTokenizer(r'\w+')
+        lemmatizer = WordNetLemmatizer()
+
+        tweet_tokens = tokenizer.tokenize(tweet)[1:]
+        tweet_tokens = [word for word in tweet_tokens if word.isalpha()]
+        tweet_tokens = [word for word in tweet_tokens if word.lower() != 'rt']
+
+        
+        tweet = " ".join([word for word in tweet_tokens if word not in stopwords.words(lang)])
+
+        tweet = tweet.strip('\n')
+        tweet = " ".join(filter(lambda x: x[0] != '@', tweet.split()))
+        tweet = bytes(tweet, 'utf-8').decode('utf-8','ignore')
+
+        # Remove any URL
+        tweet = re.sub(r"http\S+", "", tweet)
+        tweet = re.sub(r"www\S+", "", tweet)
+
+        # remove colons from the end of the sentences (if any) after removing url
+        tweet = tweet.strip()
+        tweet_len = len(tweet)
+        if tweet_len > 0:
+            if tweet[len(tweet) - 1] == ':':
+                tweet = tweet[:len(tweet) - 1]
+        # Remove any hash-tags symbols
+        tweet = tweet.replace('#', '')
+
+        # Convert every word to lowercase
+        tweet = tweet.lower()
+
+        # remove punctuations
+        tweet = tweet.translate(str.maketrans('', '', string.punctuation))
+
+        # trim extra spaces
+        tweet = " ".join(tweet.split())
+
+        # lematize words
+        tweet = lemmatizer.lemmatize(tweet)
+
+        self.tokens.append(tweet)
+
+    def most_common_token_to_img(self):
+        total_sentences = " ".join(self.tokens)
+        twitter_mask = np.array(Image.open("img/twitter.jpg"))
+        wordcloud = WordCloud(width=800, height=500, random_state=42, max_font_size=100, mask=twitter_mask, 
+        contour_color="steelblue", contour_width=0, background_color="white").generate(total_sentences)
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis('off')
+        plt.show()
+
+    def get_tweet_from_kafka(self,topic,lang,limit=100):
+        consumer = KafkaConsumer(topic,bootstrap_servers=['localhost:9092'],auto_offset_reset='earliest')
+        for i in range(limit):
+            print("Tweet : ",i)
+            v = next(iter(consumer)).value
+            
+            if v is not None:
+                tweet = json.loads(v)
+                self.tweet_to_tokens(tweet,lang)
+                print(tweet)
+
+
+# tl = tweetsListener(bearer_token)
 # tweets = tl.get_recent_tweets("covid",10)
 # tl.send_to_kafka(tweets,"tweets","en")
 
-tl.get_data_continuously("covid",10,"tweets","en",timeLimit=60,verbose=True)
+# tl.get_data_continuously("covid",10,"tweets","en",timeLimit=60,verbose=True)
+
+at = analyseTweet()
+at.get_tweet_from_kafka("tweets","english",limit=10)
+at.most_common_token_to_img()
