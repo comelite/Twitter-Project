@@ -1,15 +1,13 @@
-import tweepy
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem import WordNetLemmatizer
 import nltk
 from nltk.corpus import stopwords
-import re
-import string
-from wordcloud import WordCloud
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
-
+import re
+import string
+from wordcloud import WordCloud
 nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('omw-1.4')
@@ -22,6 +20,9 @@ class Analyser():
         pass
 
     def tweet_to_tokens(self, tweet, lang):
+        # Convert the tweet to tokens
+        # @param tweet : the tweet to convert to tokens
+        # @param lang : the language of stopwords to use
         tokenizer = RegexpTokenizer(r'\w+')
         lemmatizer = WordNetLemmatizer()
 
@@ -64,6 +65,7 @@ class Analyser():
         self.tokens.append(tweet)
 
     def most_common_token_to_img(self):
+        # Generate a wordcloud image from the most common tokens
         total_sentences = " ".join(self.tokens)
         twitter_mask = np.array(Image.open("img/twitter.jpg"))
         wordcloud = WordCloud(width=800, height=500, random_state=42, max_font_size=100, mask=twitter_mask,

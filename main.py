@@ -18,9 +18,9 @@ if __name__ == "__main__":
     # Retrieve the tweets from the kafka topic "tweets" as a generator
     test_tweets = retriever.Retriever("test_tweets")
     test_tweets_list = test_tweets.retrieve_tweets(2)
-    for tweet in test_tweets_list:
-        print(tweet)
 
     # Analyse the tweets
-    at = analyser.Analyser(tweets)
+    at = analyser.Analyser()
+    for tweet in test_tweets_list:
+        at.tweet_to_tokens(tweet, "english")
     at.most_common_token_to_img()
