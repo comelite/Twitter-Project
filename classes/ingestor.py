@@ -4,7 +4,6 @@ import tweepy
 import datetime
 import time
 
-
 class Ingestor():
     # Class to ingest tweets from the twitter API and send them to a kafka topic in utf-8
     def __init__(self, bearer_token):

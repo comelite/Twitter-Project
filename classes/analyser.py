@@ -1,7 +1,6 @@
 from afinn import Afinn
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem import WordNetLemmatizer
-import nltk
 from nltk.corpus import stopwords
 from PIL import Image
 import numpy as np
@@ -12,8 +11,6 @@ from wordcloud import WordCloud
 nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('omw-1.4')
-
-# for sentiment analysis
 
 
 class Cloud():
