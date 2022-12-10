@@ -9,7 +9,7 @@ if __name__ == "__main__":
     # Create a class to analyse the tweets
     feed = ingestor.Ingestor(keys.bearer_token)
 
-    # Get 2 recent tweets from the topic "russia"
+    # Get 10 recent tweets from the topic "russia"
     tweets = feed.get_recent_tweets("russia", 10)
 
     # Send them to the kafka topic "test_tweets"
@@ -17,10 +17,15 @@ if __name__ == "__main__":
 
     # Retrieve the tweets from the kafka topic "tweets" as a generator
     test_tweets = retriever.Retriever("test_tweets")
-    test_tweets_list = test_tweets.retrieve_tweets(2)
+    test_tweets_generator = test_tweets.retrieve_tweets(2)
 
     # Analyse the tweets
-    at = analyser.Analyser()
-    for tweet in test_tweets_list:
+    at = analyser.Cloud()
+    sentiment = analyser.Sentiment()
+
+    for tweet in test_tweets_generator:
         at.tweet_to_tokens(tweet, "english")
+        print(tweet)
+        print("Sentiment: ", "positive" if sentiment.tweet_to_sentiment(
+            tweet) else "negative")
     at.most_common_token_to_img()

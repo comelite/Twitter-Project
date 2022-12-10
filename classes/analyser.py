@@ -1,3 +1,4 @@
+from afinn import Afinn
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem import WordNetLemmatizer
 import nltk
@@ -12,8 +13,10 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('omw-1.4')
 
+# for sentiment analysis
 
-class Analyser():
+
+class Cloud():
 
     def __init__(self):
         self.tokens = []
@@ -73,3 +76,16 @@ class Analyser():
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         plt.show()
+
+
+class Sentiment():
+    # Sentiment analysis class
+    def __init__(self):
+        pass
+
+    def tweet_to_sentiment(self, tweet):
+        # Sentiment analysis of a tweet
+        # Returns True if the tweet is positive, False if it is negative
+        afinn = Afinn()
+        score = afinn.score(tweet)
+        return score >= 0
