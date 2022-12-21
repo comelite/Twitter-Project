@@ -32,7 +32,7 @@ class Ingestor():
                                                   max_results=limit)
         return tweets
 
-    def send_to_kafka(self, tweets, topic, lang, verbose=False):
+    def send_to_kafka(self, tweets, topic, lang=None, verbose=False):
         # Send the tweets to the kafka topic
         # If the language is not specified, send all the tweets
         # @param tweets : the tweets to send
