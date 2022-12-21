@@ -9,8 +9,8 @@ if __name__ == "__main__":
     # Create a class to analyse the tweets
     feed = ingestor.Ingestor(keys.bearer_token)
 
-    # Get 10 recent tweets from the topic "russia"
-    tweets = feed.get_recent_tweets("russia", 10)
+    # Get 10 recent tweets from the topic "france"
+    tweets = feed.get_recent_tweets("france", 10)
 
     # Send them to the kafka topic "test_tweets"
     feed.send_to_kafka(tweets, "test_tweets", "en", False)
