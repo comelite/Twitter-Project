@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     # Retrieve the tweets from the kafka topic "tweets" as a generator
     test_tweets = retriever.Retriever("test_tweets")
-    test_tweets_generator = test_tweets.retrieve_tweets(2)
+    test_tweets_generator = test_tweets.retrieve_tweets(10)
 
     # Analyse the tweets
     at = analyser.Cloud()

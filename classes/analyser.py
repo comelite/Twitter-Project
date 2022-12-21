@@ -1,4 +1,5 @@
 from afinn import Afinn
+from nltk import download
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -8,9 +9,10 @@ import matplotlib.pyplot as plt
 import re
 import string
 from wordcloud import WordCloud
-nltk.download('stopwords')
-nltk.download('wordnet')
-nltk.download('omw-1.4')
+
+download('stopwords')
+download('wordnet')
+download('omw-1.4')
 
 
 class Cloud():
