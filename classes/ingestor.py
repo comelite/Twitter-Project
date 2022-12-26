@@ -21,7 +21,7 @@ class Ingestor():
         # @param start_time : the start time of the tweets to get
         # @param end_time : the end time of the tweets to get
         start_time = datetime.datetime.utcnow(
-        ) - datetime.timedelta(seconds=40) if start_time is None else start_time
+        ) - datetime.timedelta(minutes=10) if start_time is None else start_time
         end_time = datetime.datetime.utcnow(
         ) - datetime.timedelta(seconds=10) if end_time is None else end_time
         tweets = self.client.search_recent_tweets(query=query,
