@@ -1,5 +1,7 @@
-kafka-python==2.0.2
-tweepy==4.12.1
-nltk==3.7
-wordcloud==1.8.2.2
-afinn==0.1
+kafka-python >= 2.0.2
+tweepy >= 4.12.1
+nltk >= 3.7
+wordcloud >= 1.8.2.2
+afinn >= 0.1
+pandas >= 1.5.2
+scikit-learn >= 1.2.0
