@@ -26,7 +26,7 @@ class Ingestor():
         ) - datetime.timedelta(seconds=10) if end_time is None else end_time
         tweets = self.client.search_recent_tweets(query=query,
                                                   tweet_fields=[
-                                                      'context_annotations', 'created_at', 'lang'],
+                                                      'context_annotations', 'created_at', 'lang', 'author_id'],
                                                   start_time=start_time,
                                                   end_time=end_time,
                                                   max_results=limit)
@@ -41,9 +41,13 @@ class Ingestor():
         # @param verbose : if true, print the text of the tweets
         for tweet in tweets.data:
             if lang is None or tweet.lang == lang:
-                self.producer.send(topic, tweet.text)
+                self.producer.send(topic, {"id":tweet.id,"text":tweet.text,"autor":tweet.author_id,"created_at":tweet.created_at,"lang":tweet.lang})
                 if verbose:
                     print(tweet.text)
+                    print(tweet.created_at)
+                    print(tweet.lang)
+                    print(tweet.author_id)
+                    print(tweet.id)
         self.producer.flush()
 
     def get_data_continuously(self, query, limit, topic, lang, timeLimit=0, verbose=False):
