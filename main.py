@@ -2,12 +2,12 @@
 from classes import app
 from nltk import download
 
-download('wordnet')
-download('omw-1.4')
-download('stopwords')
-
 if __name__ == "__main__":
-
+    
+    # Download the stopwords from nltk
+    download('wordnet')
+    download('omw-1.4')
+    download('stopwords')
     # Set the topic to search
     query = "white OR arab OR black OR asian OR muslim OR jews"
     # Set the topic to send the data to
