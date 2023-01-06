@@ -1,48 +1,50 @@
 # import classes from the class folder
-from classes import secret, ingestor, retriever, analyser, app
+from classes import secret, ingestor, retriever, analyser, user_information, app
 from wordcloud import WordCloud
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 
-if __name__ == "__main__":
+
+if __name__ == "__main__": #I left all the comments because some parts are not implemented yet like the word cloud in the end the goal is that main only runs the app class.
 
     # Create a class to decode the secrets
-    keys = secret.Secret()
+    # keys = secret.Secret()
 
     # # Create a class to analyse the tweets
     # feed = ingestor.Ingestor(keys.bearer_token)
     
     # Set the topic to search
     query = "arab OR black OR asian OR muslim OR jews"
-    topic = "racist"
+    topic = "racist_test"
     language = "english"
     nb_tweets = 10
     appl = app.App()
 
     appl.run(query, language[:2] + "_" + topic.lower() + "_tweets", language, nb_tweets)
+    
     # # Generate a kafka topic name
     # kf_topic = language[:2] + "_" + topic.lower() + "_tweets"
-    
+
     # # Get 10 recent tweets from the topic
     # tweets = feed.get_recent_tweets(query, nb_tweets)
-    
+
     # # Send them to the kafka topic "test_tweets"
     # feed.send_to_kafka(tweets, kf_topic, language[:2], False)
-    
+
     # # Retrieve the tweets from the kafka topic "tweets" as a generator
     # test_tweets = retriever.Retriever(kf_topic)
     # test_tweets_generator = test_tweets.retrieve_tweets(nb_tweets)
-    
+
     # # Analyse the tweets
     # normal_cloud = analyser.Cloud()
     # hate_cloud = analyser.Cloud()
     # racist_cloud = analyser.Cloud()
     # sentiment = analyser.Sentiment()
-    
+
     # racism_hatred = analyser.Racist("./datasets/hatred_init_en.csv")
     # racism_racist = analyser.Racist("./datasets/racist_init_en.csv")
-    
+
     # for idx, tweet in enumerate(test_tweets_generator):
     #     print("------------------------")
     #     print("Tweet ", idx+1, ": " , tweet)
@@ -75,3 +77,9 @@ if __name__ == "__main__":
     #     plt.axis('off')
     # fig.suptitle("Normal - Hate - Racist")
     # plt.show()
+    # user_informations = user_information.User_Information(keys.bearer_token)
+
+    # ui = user_informations.get_user_information_from_username("elonmusk")
+
+    # user_tweets = user_informations.get_user_tweets(ui.data.id, 10)
+    # print(user_tweets)
