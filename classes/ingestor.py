@@ -41,13 +41,29 @@ class Ingestor():
         # @param verbose : if true, print the text of the tweets
         for tweet in tweets.data:
             if lang is None or tweet.lang == lang:
-                self.producer.send(topic, {"id":tweet.id,"text":tweet.text,"autor":tweet.author_id,"created_at":tweet.created_at,"lang":tweet.lang})
+                self.producer.send(topic, {"id":tweet.id,"text":tweet.text,"author_id":tweet.author_id,"lang":tweet.lang})
                 if verbose:
                     print(tweet.text)
-                    print(tweet.created_at)
                     print(tweet.lang)
                     print(tweet.author_id)
                     print(tweet.id)
+        self.producer.flush()
+
+    def send_to_kafka_from_dict(self, tweets, topic, lang=None, verbose=False):
+        # Send the tweets to the kafka topic from a dictionary
+        # If the language is not specified, send all the tweets
+        # @param tweets : the tweets to send in array of dictionary format
+        # @param topic : the topic to send the tweets to
+        # @param lang : the language of the tweets to send
+        # @param verbose : if true, print the text of the tweets
+        for tweet in tweets:
+            if lang is None or tweet.lang == lang:
+                self.producer.send(topic, {"id":tweet['id'],"text":tweet['text'],"author_id":tweet['author_id'],"lang":tweet['lang']})
+                if verbose:
+                    print(tweet['text'])
+                    print(tweet['lang'])
+                    print(tweet['author_id'])
+                    print(tweet['id'])
         self.producer.flush()
 
     def get_data_continuously(self, query, limit, topic, lang, timeLimit=0, verbose=False):
