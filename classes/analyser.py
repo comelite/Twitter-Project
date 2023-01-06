@@ -16,9 +16,13 @@ from classes.cleaner import Cleaner
         
 class Cloud():
 
-    def __init__(self):
+    def __init__(self, word_window = 500):
         self.tokens = []
-        pass
+        self.word_window = word_window
+        
+    def word_windowing(self):
+        # Word windowing, if the list of words is longer than the word window, then we cut it
+        self.tokens = self.tokens if len(self.tokens) <= self.word_window else self.tokens[-self.word_window:]
 
     def tweet_to_tokens(self, tweet, lang):
         # Convert the tweet to tokens
@@ -26,6 +30,7 @@ class Cloud():
         # @param lang : the language of stopwords to use
         cleaner = Cleaner(tweet, lang, stopwords.words(lang))
         self.tokens.append(cleaner.to_tokens())
+        self.word_windowing()
 
     def most_common_token_to_img(self):
         # Generate a wordcloud image from the most common tokens
