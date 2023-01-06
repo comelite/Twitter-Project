@@ -85,5 +85,4 @@ class Ingestor():
             self.send_to_kafka(tweets, topic, lang, verbose)
             start_time = end_time
             end_time = start_time + datetime.timedelta(seconds=10)
-            print("Pause ! ", true_end_time < datetime.datetime.utcnow())
             time.sleep(10)

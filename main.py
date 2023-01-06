@@ -3,38 +3,20 @@ from classes import secret, ingestor, retriever, analyser, user_information, app
 from wordcloud import WordCloud
 import numpy as np
 import matplotlib.pyplot as plt
+
 from PIL import Image
 
 
-if __name__ == "__main__": #I left all the comments because some parts are not implemented yet like the word cloud in the end the goal is that main only runs the app class.
+if __name__ == "__main__":
 
-    # Create a class to decode the secrets
-    # keys = secret.Secret()
-
-    # # Create a class to analyse the tweets
-    # feed = ingestor.Ingestor(keys.bearer_token)
-    
     # Set the topic to search
-    query = "arab OR black OR asian OR muslim OR jews"
+    query = "white OR arab OR black OR asian OR muslim OR jews"
     topic = "racist_test"
     language = "english"
     nb_tweets = 10
-    appl = app.App()
+    application = app.App(query, language[:2] + "_" + topic.lower() + "_tweets", language, nb_tweets)
 
-    appl.run(query, language[:2] + "_" + topic.lower() + "_tweets", language, nb_tweets)
-    
-    # # Generate a kafka topic name
-    # kf_topic = language[:2] + "_" + topic.lower() + "_tweets"
-
-    # # Get 10 recent tweets from the topic
-    # tweets = feed.get_recent_tweets(query, nb_tweets)
-
-    # # Send them to the kafka topic "test_tweets"
-    # feed.send_to_kafka(tweets, kf_topic, language[:2], False)
-
-    # # Retrieve the tweets from the kafka topic "tweets" as a generator
-    # test_tweets = retriever.Retriever(kf_topic)
-    # test_tweets_generator = test_tweets.retrieve_tweets(nb_tweets)
+    application.run()
 
     # # Analyse the tweets
     # normal_cloud = analyser.Cloud()
