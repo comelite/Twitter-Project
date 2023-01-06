@@ -1,11 +1,10 @@
 # import classes from the class folder
-from classes import secret, ingestor, retriever, analyser, user_information, app
-from wordcloud import WordCloud
-import numpy as np
-import matplotlib.pyplot as plt
+from classes import app
+from nltk import download
 
-from PIL import Image
-
+download('wordnet')
+download('omw-1.4')
+download('stopwords')
 
 if __name__ == "__main__":
 

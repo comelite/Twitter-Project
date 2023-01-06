@@ -10,9 +10,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import f1_score
 
-from nltk import download
 from nltk.corpus import stopwords
-download('stopwords')
 
 from classes.cleaner import Cleaner
         

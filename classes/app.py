@@ -1,7 +1,10 @@
 from classes import secret, ingestor, retriever, analyser
 import multiprocessing as mp
 import time
-
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+import numpy as np
+from PIL import Image
 
 class App():
     def __init__(self, query, topic, lang, nb_tweets):
@@ -39,6 +42,7 @@ class App():
                     feed.send_to_kafka_from_dict([tweet], f"{self.topic}_hateful_tweets")
                 if proba_racist > 0.75:
                     feed.send_to_kafka_from_dict([tweet], f"{self.topic}_racist_tweets")
+                feed.send_to_kafka_from_dict([tweet], f"{self.topic}_normal_tweets")
 
     def analyse_sentiment_tweet(self, verbose = False):
         # analyse the tweets to see if they are positif or negatif
@@ -63,7 +67,48 @@ class App():
                         print("Tweet: ", tweet['text'])
                         print("Sentiment: ", "negative")
                     feed.send_to_kafka_from_dict([tweet], f"{self.topic}_negative_tweets")
-                    
+
+    def generate_clouds(self):
+        
+        time.sleep(5)
+        twitter_mask = np.array(Image.open("img/twitter.jpg"))
+        
+        normal_cloud = analyser.Cloud()
+        hate_cloud = analyser.Cloud()
+        racist_cloud = analyser.Cloud()
+        cloud_array = [normal_cloud, hate_cloud, racist_cloud]
+        names = ["Normal", "Hate", "Racist"]
+        
+        hateful_tweets_flow = retriever.Retriever(f"{self.topic}_hateful_tweets")
+        racist_tweets_flow = retriever.Retriever(f"{self.topic}_racist_tweets")
+        normal_tweets_flow = retriever.Retriever(f"{self.topic}_normal_tweets")
+        
+        figure = plt.figure()
+        printable = True
+        while True:
+            hate_tweets = hateful_tweets_flow.retrieve_tweets(1)
+            for tweet in hate_tweets:
+                hate_cloud.tweet_to_tokens(tweet['text'], self.lang)
+            racist_tweets = racist_tweets_flow.retrieve_tweets(1)
+            for tweet in racist_tweets:
+                racist_cloud.tweet_to_tokens(tweet['text'], self.lang)
+            normal_tweets = normal_tweets_flow.retrieve_tweets(1)
+            for tweet in normal_tweets:
+                normal_cloud.tweet_to_tokens(tweet['text'], self.lang)
+            for idx, cloud in enumerate(cloud_array):
+                plt.subplot(1, len(cloud_array), idx+1).set_title(names[idx])
+                wordcloud = WordCloud(random_state=42, max_font_size=100, mask=twitter_mask,
+                                contour_color="steelblue", contour_width=0, background_color="white").generate(" ".join(cloud.tokens))
+                plt.imshow(wordcloud, interpolation='bilinear')
+                plt.axis('off')
+            
+            if printable:
+                figure.show()
+                printable = False
+            else:
+                figure.canvas.draw()
+                figure.canvas.flush_events()
+                                
     def tweeter_to_kafka(self):
         # Gather tweets from tweeter and send them to kafka
         feed = ingestor.Ingestor(self.secrets.bearer_token)
@@ -74,11 +119,14 @@ class App():
             racism_hatred = analyser.Racist("./datasets/hatred_init_en.csv")
             racism_racist = analyser.Racist("./datasets/racist_init_en.csv")
             # Get tweets
-            process_data_from_tweeter = self.ctx.Process(self.tweeter_to_kafka())
+            process_data_from_tweeter = self.ctx.Process(target=self.tweeter_to_kafka)
             process_data_from_tweeter.start()
             # Sentiment analysis
-            process_analyse_sentiment = self.ctx.Process(self.analyse_sentiment_twee())
+            process_analyse_sentiment = self.ctx.Process(target = self.analyse_sentiment_tweet)
             process_analyse_sentiment.start()
             # Racist analysis
-            process_analyse_racism = self.ctx.Process(self.analyse_racism_tweet(racism_hatred, racism_racist))
+            process_analyse_racism = self.ctx.Process(target = self.analyse_racism_tweet, args = (racism_hatred, racism_racist))
             process_analyse_racism.start()
+            # Clouds
+            process_clouds = self.ctx.Process(target = self.generate_clouds)
+            process_clouds.start()
