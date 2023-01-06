@@ -1,5 +1,9 @@
 # import classes from the class folder
+<<<<<<< HEAD
 from classes import secret, ingestor, retriever, analyser, user_information, app
+=======
+from classes import secret, ingestor, retriever, analyser, user_information
+>>>>>>> 317104fa30ee2afc00ca1de9fa7e1ddc2a557ab5
 from wordcloud import WordCloud
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,6 +15,7 @@ from PIL import Image
     # Create a class to decode the secrets
 keys = secret.Secret()
 
+<<<<<<< HEAD
     # # Create a class to analyse the tweets
     # feed = ingestor.Ingestor(keys.bearer_token)
     
@@ -34,6 +39,29 @@ appl.run(query, language[:2] + "_" + topic.lower() + "_tweets", language, nb_twe
 # # Retrieve the tweets from the kafka topic "tweets" as a generator
 # test_tweets = retriever.Retriever(kf_topic)
 # test_tweets_generator = test_tweets.retrieve_tweets(nb_tweets)
+=======
+# Create a class to analyse the tweets
+feed = ingestor.Ingestor(keys.bearer_token)
+
+# Set the topic to search
+query = "arab OR black OR asian OR muslim OR jews"
+topic = "test"
+language = "english"
+nb_tweets = 100
+
+# Generate a kafka topic name
+kf_topic = language[:2] + "_" + topic.lower() + "_tweets"
+
+# Get 10 recent tweets from the topic
+tweets = feed.get_recent_tweets(query, nb_tweets)
+
+# Send them to the kafka topic "test_tweets"
+feed.send_to_kafka(tweets, kf_topic, language[:2], False)
+
+# Retrieve the tweets from the kafka topic "tweets" as a generator
+test_tweets = retriever.Retriever(kf_topic)
+test_tweets_generator = test_tweets.retrieve_tweets(nb_tweets)
+>>>>>>> 317104fa30ee2afc00ca1de9fa7e1ddc2a557ab5
 
 # # Analyse the tweets
 # normal_cloud = analyser.Cloud()
@@ -76,9 +104,28 @@ appl.run(query, language[:2] + "_" + topic.lower() + "_tweets", language, nb_twe
 #     plt.axis('off')
 # fig.suptitle("Normal - Hate - Racist")
 # plt.show()
+<<<<<<< HEAD
+=======
+
+
+######################
+# Mathys' code
+# keys = secret.Secrets()
+
+>>>>>>> 317104fa30ee2afc00ca1de9fa7e1ddc2a557ab5
 # user_informations = user_information.User_Information(keys.bearer_token)
 
 # ui = user_informations.get_user_information_from_username("elonmusk")
 
 # user_tweets = user_informations.get_user_tweets(ui.data.id, 10)
 # print(user_tweets)
+<<<<<<< HEAD
+=======
+# tweets = feed.get_recent_tweets(query, nb_tweets)
+# for tweet in tweets.data:
+#     print(tweet.text)
+#     print(tweet.created_at)
+#     print(tweet.lang)
+#     print(tweet.author_id)
+#     print(tweet.id)
+>>>>>>> 317104fa30ee2afc00ca1de9fa7e1ddc2a557ab5
