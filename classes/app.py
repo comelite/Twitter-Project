@@ -26,7 +26,7 @@ class App():
         # @param racism_racist: the model to analyse the tweets for racist tone
         # @param verbose: if True, print the tweets and the results
         time.sleep(10) # Wait for the sentiment analysis to be start
-        retriever_module = retriever.Retriever(f"{self.topic}_negative_tweets")
+        retriever_module = retriever.Retriever(self.topic)
         feed = ingestor.Ingestor(self.secrets.bearer_token)
             
         while True:
