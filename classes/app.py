@@ -44,30 +44,6 @@ class App():
                     feed.send_to_kafka_from_dict([tweet], f"{self.topic}_racist_tweets")
                 feed.send_to_kafka_from_dict([tweet], f"{self.topic}_normal_tweets")
 
-    def analyse_sentiment_tweet(self, verbose = False):
-        # analyse the tweets to see if they are positif or negatif
-        # @param verbose : if True, print the tweets and the results
-
-        time.sleep(5) # Wait for the retriever from tweeter to be start
-
-        sentiment = analyser.Sentiment()
-        retriever_module = retriever.Retriever(self.topic)
-        feed = ingestor.Ingestor(self.secrets.bearer_token)
-
-        while True:
-            tweets = retriever_module.retrieve_tweets(1)
-            for tweet in tweets:
-                if sentiment.tweet_to_sentiment(tweet['text']):
-                    if verbose:
-                        print("Tweet: ", tweet['text'])
-                        print("Sentiment: ", "positive")
-                    feed.send_to_kafka_from_dict([tweet], f"{self.topic}_positive_tweets")
-                else:
-                    if verbose:
-                        print("Tweet: ", tweet['text'])
-                        print("Sentiment: ", "negative")
-                    feed.send_to_kafka_from_dict([tweet], f"{self.topic}_negative_tweets")
-
     def generate_clouds(self):
         
         time.sleep(5)
