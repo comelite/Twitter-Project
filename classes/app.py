@@ -73,9 +73,10 @@ class App():
         time.sleep(5)
         twitter_mask = np.array(Image.open("img/twitter.jpg"))
         
-        normal_cloud = analyser.Cloud()
         hate_cloud = analyser.Cloud()
         racist_cloud = analyser.Cloud()
+        normal_cloud = analyser.Cloud()
+        
         cloud_array = [normal_cloud, hate_cloud, racist_cloud]
         names = ["Normal", "Hate", "Racist"]
         
@@ -86,15 +87,16 @@ class App():
         figure = plt.figure()
         printable = True
         while True:
+            
             hate_tweets = hateful_tweets_flow.retrieve_tweets(1)
-            for tweet in hate_tweets:
-                hate_cloud.tweet_to_tokens(tweet['text'], self.lang)
             racist_tweets = racist_tweets_flow.retrieve_tweets(1)
-            for tweet in racist_tweets:
-                racist_cloud.tweet_to_tokens(tweet['text'], self.lang)
             normal_tweets = normal_tweets_flow.retrieve_tweets(1)
-            for tweet in normal_tweets:
-                normal_cloud.tweet_to_tokens(tweet['text'], self.lang)
+            
+            for h, r, n in zip(hate_tweets, racist_tweets, normal_tweets):
+                hate_cloud.tweet_to_tokens(h['text'], self.lang)
+                racist_cloud.tweet_to_tokens(r['text'], self.lang)
+                normal_cloud.tweet_to_tokens(n['text'], self.lang)
+                
             for idx, cloud in enumerate(cloud_array):
                 plt.subplot(1, len(cloud_array), idx+1).set_title(names[idx])
                 wordcloud = WordCloud(random_state=42, max_font_size=100, mask=twitter_mask,
