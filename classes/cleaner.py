@@ -2,10 +2,11 @@ import re
 import string
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem import WordNetLemmatizer
+import html
 
 class Cleaner():
     
-    def __init__(self, tweet, lang, stoplist):
+    def __init__(self, tweet, lang, stoplist = []):
         # Init the cleaner class
         # @param tweet : Tweet to clean
         # @param lang : Language of the tweet
@@ -66,3 +67,14 @@ class Cleaner():
         tweet = lemmatizer.lemmatize(tweet)
         
         return tweet
+
+    def to_clean(self): 
+        # Shortcut for the tweet
+        tweet = self.tweet
+        tweet = tweet.replace("\n"," ")
+        tokenizer = RegexpTokenizer(r'[\w\@\#]+')
+        tweet_tokens = tokenizer.tokenize(tweet)[1:]
+        tweet = " ".join([word for word in tweet_tokens])
+        emojis = re.compile(u'([\U00002600-\U000027BF])|([\U0001f300-\U0001f64F])|([\U0001f680-\U0001f6FF])')
+        tweet = emojis.sub(r'', tweet)
+        return bytes(tweet, 'utf-8').decode('utf-8', 'ignore')

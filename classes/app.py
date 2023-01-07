@@ -1,4 +1,4 @@
-from classes import secret, ingestor, retriever, analyser
+from classes import secret, ingestor, retriever, analyser, user_information, cleaner
 import multiprocessing as mp
 import time
 import matplotlib.pyplot as plt
@@ -32,18 +32,61 @@ class App():
         while True:
             tweets = retriever_module.retrieve_tweets(1)
             for tweet in tweets:
-                hateful, proba_hate = racism_hatred.tweet_to_racism(tweet['text'])
-                racist, proba_racist = racism_racist.tweet_to_racism(tweet['text'])
+                hateful, _ = racism_hatred.tweet_to_racism(tweet['text'])
+                racist, _ = racism_racist.tweet_to_racism(tweet['text'])
                 if verbose:
                     print("Tweet: ", tweet['text'])
                     print (f'Hateful tone with a {int(proba_hate*100)}% probability')
                     print (f'Racist tone with a {int(proba_racist*100)}% probability')
-                if proba_hate > 0.75:
+                if hateful:
                     feed.send_to_kafka_from_dict([tweet], f"{self.topic}_hateful_tweets")
-                if proba_racist > 0.75:
+                    self.analyse_user_tweets(tweet, racism_racist, 50)
+                if racist:
                     feed.send_to_kafka_from_dict([tweet], f"{self.topic}_racist_tweets")
                 feed.send_to_kafka_from_dict([tweet], f"{self.topic}_normal_tweets")
+    
+    def analyse_user_tweets(self, tweet, racism_racist, limit):
+        # If the tweet was considered as racist, look at the user's tweets
+        # If he has done more than 10% racist tweets of his 50 last tweets, then add him to a dangerous list
+        # @param tweet : the tweet to analyse and retrieve the user from
+        # @param racism_racist : the model to analyse the tweets for racist tone
+        # @param limit : the number of tweets to retrieve from the user
+        
+        # Create user_information instance
+        user = user_information.User_Information(self.secrets.bearer_token)
+        # Get the user's tweets (last 50) and put it in a topic
+        user_topic = user.get_user_tweets(tweet['author_id'], limit)
+        # Get the topic and retrieve the tweets
+        feed = retriever.Retriever(user_topic)
+        user_tweets = feed.retrieve_tweets(limit)
+        # List of tweets that are racist
+        racist_dict = {
+            "author": user.get_user_information_from_id(tweet['author_id'])['username'],
+            "racist_tweets": []
+        }
 
+        # Count the number of racist tweets
+        for current_tweet in user_tweets: 
+            racist, _ = racism_racist.tweet_to_racism(current_tweet['text'])
+            if racist:
+                clean = cleaner.Cleaner(current_tweet['text'], self.lang)
+                new_tweet = clean.to_clean()
+                racist_dict["racist_tweets"].append(new_tweet)
+                
+        # If more than 10% of the tweets are racist, add the user to the dangerous list
+        if len(racist_dict["racist_tweets"]) >= int(0.1 * limit):
+            self.append_dangerous_file(racist_dict)
+
+    def append_dangerous_file(self, racist_dict):
+        # Generate a file with the dangerous users and their tweets
+        # @param racist_dict : the dictionary containing the user and his tweets
+        with open("./dangerous_users.txt", "a+") as file:
+            file.write(f"Supposed criminal: {racist_dict['author']}\n")
+            file.write(f"Suspected racist tweets: \n")
+            for tweet in racist_dict['racist_tweets']:
+                file.write(f"- \t{tweet}\n")
+            file.write("-------------------\n")
+    
     def generate_clouds(self):
         
         time.sleep(5)
