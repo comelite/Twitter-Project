@@ -1,4 +1,3 @@
-from afinn import Afinn
 from PIL import Image
 import numpy as np
 import pandas as pd
@@ -41,18 +40,6 @@ class Cloud():
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         plt.show()
-        
-
-class Sentiment():
-    # Sentiment analysis class
-    def __init__(self):
-        self.afinn = Afinn()
-
-    def tweet_to_sentiment(self, tweet):
-        # Sentiment analysis of a tweet
-        # Returns True if the tweet is positive, False if it is negative
-        score = self.afinn.score(tweet)
-        return score >= 0
     
 class Racist():
     # Sentiment analysis class

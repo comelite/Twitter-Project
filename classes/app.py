@@ -115,18 +115,23 @@ class App():
         feed.get_data_continuously(self.query, self.nb_tweets, self.topic, self.lang[:2], verbose = False)
 
     def run(self):
+        try:
             # Start by training the classifier
             racism_hatred = analyser.Racist("./datasets/hatred_init_en.csv")
             racism_racist = analyser.Racist("./datasets/racist_init_en.csv")
             # Get tweets
             process_data_from_tweeter = self.ctx.Process(target=self.tweeter_to_kafka)
             process_data_from_tweeter.start()
-            # Sentiment analysis
-            process_analyse_sentiment = self.ctx.Process(target = self.analyse_sentiment_tweet)
-            process_analyse_sentiment.start()
             # Racist analysis
             process_analyse_racism = self.ctx.Process(target = self.analyse_racism_tweet, args = (racism_hatred, racism_racist))
             process_analyse_racism.start()
             # Clouds
             process_clouds = self.ctx.Process(target = self.generate_clouds)
+            process_clouds.start()
+        except RuntimeError:
+            print("Program is shutting down...") 
+        finally:
+            # Join the threads and close
+            process_data_from_tweeter.join()
+            process_analyse_racism.join()
             process_clouds.start()

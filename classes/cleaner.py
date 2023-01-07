@@ -2,7 +2,6 @@ import re
 import string
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem import WordNetLemmatizer
-import time
 
 class Cleaner():
     
