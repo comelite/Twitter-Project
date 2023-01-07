@@ -9,7 +9,7 @@ if __name__ == "__main__":
     download('omw-1.4')
     download('stopwords')
     # Set the topic to search
-    query = "white OR arab OR black OR asian OR muslim OR jews"
+    query = "israel OR jews OR palestine OR religion"
     # Set the topic to send the data to
     topic = "racist_test"
     # Set the language of the tweets

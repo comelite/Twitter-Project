@@ -20,18 +20,18 @@ class Cleaner():
         # Shortcut for the tweet
         tweet = self.tweet
         
-        # Init the tokenizer and the lemmatizer
-        tokenizer = RegexpTokenizer(r'\w+')
-        lemmatizer = WordNetLemmatizer()
-
-        # Remove the new line character
+        # Remove the new line character (if any)
         tweet = tweet.strip('\n')
         
-        # Remove the mentions
-        tweet = " ".join(filter(lambda x: x[0] != '@', tweet.split()))
+        # Init the tokenizer and the lemmatizer
+        tokenizer = RegexpTokenizer(r'[\w\@\#]+')
+        lemmatizer = WordNetLemmatizer()
         
         # Tokenize the tweet as a list and remove "RT"
         tweet_tokens = tokenizer.tokenize(tweet)[1:]
+        
+        # Remove the mentions using regex @\w+, then URLs and co
+        tweet_tokens = [word for word in tweet_tokens if not re.match(r'@\w+', word) and not re.match(r'http\S+', word) and not re.match(r"www\S+", word) and not re.match(r"\bco\b", word)]
         
         # Remove any non-alphabetic characters
         tweet_tokens = [word for word in tweet_tokens if word.isalpha()]
@@ -45,17 +45,12 @@ class Cleaner():
         # Decode the tweet
         tweet = bytes(tweet, 'utf-8').decode('utf-8', 'ignore')
         
-        # Remove any URL
-        tweet = re.sub(r"http\S+", "", tweet)
-        tweet = re.sub(r"www\S+", "", tweet)
-        tweet = re.sub(r"co\S+", "", tweet)
-        
         # remove colons from the end of the sentences (if any) after removing url
         tweet = tweet.strip()
-        tweet_len = len(tweet)
-        if tweet_len > 0:
+        if len(tweet) > 0:
             if tweet[len(tweet) - 1] == ':':
                 tweet = tweet[:len(tweet) - 1]
+                
         # Remove any hash-tags symbols
         tweet = tweet.replace('#', '')
 
@@ -70,4 +65,5 @@ class Cleaner():
 
         # lematize words
         tweet = lemmatizer.lemmatize(tweet)
+        
         return tweet

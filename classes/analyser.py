@@ -16,7 +16,7 @@ from classes.cleaner import Cleaner
         
 class Cloud():
 
-    def __init__(self, word_window = 500):
+    def __init__(self, word_window = 200):
         self.tokens = []
         self.word_window = word_window
         
