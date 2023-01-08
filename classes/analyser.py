@@ -1,4 +1,3 @@
-from afinn import Afinn
 from PIL import Image
 import numpy as np
 import pandas as pd
@@ -10,17 +9,19 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import f1_score
 
-from nltk import download
 from nltk.corpus import stopwords
-download('stopwords')
 
 from classes.cleaner import Cleaner
         
 class Cloud():
 
-    def __init__(self):
+    def __init__(self, word_window = 200):
         self.tokens = []
-        pass
+        self.word_window = word_window
+        
+    def word_windowing(self):
+        # Word windowing, if the list of words is longer than the word window, then we cut it
+        self.tokens = self.tokens if len(self.tokens) <= self.word_window else self.tokens[-self.word_window:]
 
     def tweet_to_tokens(self, tweet, lang):
         # Convert the tweet to tokens
@@ -28,6 +29,7 @@ class Cloud():
         # @param lang : the language of stopwords to use
         cleaner = Cleaner(tweet, lang, stopwords.words(lang))
         self.tokens.append(cleaner.to_tokens())
+        self.word_windowing()
 
     def most_common_token_to_img(self):
         # Generate a wordcloud image from the most common tokens
@@ -38,18 +40,6 @@ class Cloud():
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         plt.show()
-        
-
-class Sentiment():
-    # Sentiment analysis class
-    def __init__(self):
-        self.afinn = Afinn()
-
-    def tweet_to_sentiment(self, tweet):
-        # Sentiment analysis of a tweet
-        # Returns True if the tweet is positive, False if it is negative
-        score = self.afinn.score(tweet)
-        return score >= 0
     
 class Racist():
     # Sentiment analysis class
@@ -103,6 +93,6 @@ class Racist():
         new_features = self.vectorizer.transform([tweet])
         proba = self.model.predict_proba(new_features)[0][1]
         racist = False
-        if proba > self.threshold + 0.3 :
+        if proba > self.threshold + 0.2 :
             racist = True
         return racist, proba
