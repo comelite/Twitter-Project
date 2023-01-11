@@ -1,6 +1,7 @@
 from kafka import KafkaConsumer
 from json import loads
 
+
 class Retriever():
     # Class to retrieve tweets from a kafka topic as a dictionary
     def __init__(self, topics):
@@ -19,7 +20,7 @@ class Retriever():
         # @param topics : the topics to retrieve the tweets from
         # @param limit : the number of tweets to retrieve
         for message in self.consumer:
-            # return message.value and decrease the counter (generator function)
+            # return message.value and decrease counter (generator function)
             yield message.value
             limit -= 1
             if limit == 0:
