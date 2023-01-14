@@ -3,6 +3,12 @@ This project is a group project of the Data Stream Processing subject of 3 stude
 
 # Before we start
 
+You need to create an environment to run Kafka. Use requirements.txt:
+
+```bash
+pip install -r requirements.txt
+```
+
 You need to create a secrets.txt file. In this file we will find :
 
 ```
@@ -20,11 +26,11 @@ To fill in your information you have to go and get it from the [tweeter site](ht
 You need to launch your zookeeper server and your kafka server in two different terminals :
 
 ```bash
-zookeeper-server-start zookeeper.properties
+bin/zookeeper-server-start.sh config/zookeeper.properties
 ```
 
 ```bash
-kafka-server-start server.properties
+bin/kafka-server-start.sh config/server.properties
 ```
 
 After that you need to create the "tweets" topic :
