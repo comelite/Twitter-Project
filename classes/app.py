@@ -95,7 +95,7 @@ class App():
     def append_dangerous_file(self, racist_dict):
         # Generate a file with the dangerous users and their tweets
         # @param racist_dict : the dictionary containing user and its tweets
-        with open("./dangerous_users.txt", "a+") as file:
+        with open("./suspect_users.txt", "a+") as file:
             file.write(f"Pseudo to check: {racist_dict['author']}\n")
             file.write("Suspected tweets: \n")
             for tweet in racist_dict['racist_tweets']:

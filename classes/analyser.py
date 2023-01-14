@@ -125,6 +125,6 @@ class Racist():
         new_features = self.vectorizer.transform([tweet])
         proba = self.model.predict_proba(new_features)[0][1]
         racist = False
-        if proba > self.threshold + 0.2:
+        if proba > self.threshold + 0.3:
             racist = True
         return racist, proba
