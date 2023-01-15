@@ -3,10 +3,11 @@ from json import loads
 
 
 class Retriever():
-    # Class to retrieve tweets from a kafka topic as a dictionary
     def __init__(self, topics):
-        # Class constructor
-        # @param topics : the topics to retrieve the tweets from
+        """Class constructor
+
+        @param topics: the topics to retrieve the tweets from
+        """
         self.consumer = KafkaConsumer(
             bootstrap_servers=['localhost:9092'],
             auto_offset_reset='earliest',
@@ -16,9 +17,10 @@ class Retriever():
         pass
 
     def retrieve_tweets(self, limit):
-        # Retrieve the tweets from the topics
-        # @param topics : the topics to retrieve the tweets from
-        # @param limit : the number of tweets to retrieve
+        """Retrieve the tweets from the topics
+
+        @param limit: the number of tweets to retrieve
+        """
         for message in self.consumer:
             # return message.value and decrease counter (generator function)
             yield message.value
