@@ -72,6 +72,7 @@ class Cleaner():
         """
         tweet = self.tweet
         tweet = tweet.replace("\n", " ")
+        tweet = re.sub(r"http\S+", "", tweet)
         tokenizer = RegexpTokenizer(r'[\w\@\#]+')
         tweet_tokens = tokenizer.tokenize(tweet)[1:]
         tweet = " ".join([word for word in tweet_tokens])

@@ -178,9 +178,11 @@ class App():
         try:
             # Start by training the classifier
             print('Loading dataset and training the polarity classifier...')
-            racism_hatred = analyser.Racist("./datasets/hatred_init_en.csv")
+            racism_hatred = analyser.Racist(
+                "./datasets/hatred_init_en.csv", verbose=True)
             print('Loading dataset and training the racism classifier...')
-            racism_racist = analyser.Racist("./datasets/racist_init_en.csv")
+            racism_racist = analyser.Racist(
+                "./datasets/racist_init_en.csv", verbose=True)
             # Get tweets
             process_data_from_tweeter = self.ctx.Process(
                 target=self.tweeter_to_kafka)
