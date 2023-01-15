@@ -3,7 +3,7 @@ This project is a group project of the Data Stream Processing subject of 3 stude
 
 # Before we start
 
-You need to create an environment to run Kafka. Use requirements.txt:
+You need to create an environment to run Kafka. This will work with python 3.10. Use requirements.txt:
 
 ```bash
 pip install -r requirements.txt
