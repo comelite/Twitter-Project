@@ -1,43 +1,42 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
 from PIL import Image
 from wordcloud import WordCloud
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import f1_score
-
 from nltk.corpus import stopwords
-
 from classes.cleaner import Cleaner
 
 
 class Cloud():
 
-    def __init__(self, word_window=200):
+    def __init__(self, word_window=300):
         self.tokens = []
         self.word_window = word_window
 
     def word_windowing(self):
-        # Word windowing
-        # if list of words longer than word window, we cut it
+        """Word windowing
+        if list of words longer than word window, we cut it
+        """
         self.tokens = (self.tokens
                        if len(self.tokens) <= self.word_window
                        else self.tokens[-self.word_window:])
 
     def tweet_to_tokens(self, tweet, lang):
-        # Convert the tweet to tokens
-        # @param tweet : the tweet to convert to tokens
-        # @param lang : the language of stopwords to use
+        """Convert the tweet to tokens
+
+        @param tweet: the tweet to convert to tokens
+        @param lang: the language of stopwords to use
+        """
         cleaner = Cleaner(tweet, lang, stopwords.words(lang))
         self.tokens.append(cleaner.to_tokens())
         self.word_windowing()
 
     def most_common_token_to_img(self):
-        # Generate a wordcloud image from the most common tokens
+        """Generate a wordcloud image from the most common tokens"""
         total_sentences = " ".join(self.tokens)
         twitter_mask = np.array(Image.open("img/twitter.jpg"))
         wordcloud = WordCloud(width=800,
@@ -55,13 +54,13 @@ class Cloud():
 
 
 class Racist():
-    # Sentiment analysis class
     def __init__(self, path, params={'penalty': ['l1', 'l2'],
                                      'C': [3, 10, 30, 100, 300]}):
-        # Init the racist classifier
-        # @param path : Full path to the dataset
-        # @param params : Parameters to use for the GridSearch
+        """Init the racist classifier
 
+        @param path: Full path to the dataset
+        @param params: Parameters to use for the GridSearch
+        """
         # Load the dataset & fill the empty values
         self.dataset = pd.read_csv(path).fillna('')
 
@@ -117,12 +116,14 @@ class Racist():
         self.threshold = best_threshold
 
     def tweet_to_racism(self, tweet):
-        # Racist tone analysis of a tweet
-        # Returns True if the tweet has a racist tone, and the probability
+        """Racist tone analysis of a tweet
 
+        @param tweet: the tweet to analyze
+        @return racist: Boolean of whether the tweet has a racist tone
+        @return proba: The associated probability
+        """
         cleaner = Cleaner(tweet, self.lang, self.stoplist)
         tweet = cleaner.to_tokens()
-
         new_features = self.vectorizer.transform([tweet])
         proba = self.model.predict_proba(new_features)[0][1]
         racist = False

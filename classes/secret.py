@@ -1,8 +1,9 @@
 class Secret():
-    # Class to decode a file containing the secrets
     def __init__(self, file="secrets.txt"):
-        # Class constructor
-        # @param file : the file containing the secrets
+        """Class constructor
+
+        @param file : the path to the file containing the secrets
+        """
         with open("secrets.txt", "r") as f:
             secret = f.read().splitlines()
             self.api_key = secret[0].split()[1]

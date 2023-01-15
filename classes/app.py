@@ -12,11 +12,13 @@ from wordcloud import WordCloud
 
 class App():
     def __init__(self, query, topic, lang, nb_tweets):
-        # Class constructor
-        # @param topic : the topic to send the data to
-        # @param query : the query to search on tweeter
-        # @param lang : the language of the tweets
-        # @param nb_tweets : the number of tweets to retrieve
+        """Class constructor
+
+        @param topic: the topic to send the data to
+        @param query: the query to search on tweeter
+        @param lang: the language of the tweets
+        @param nb_tweets: the number of tweets to retrieve
+        """
         self.secrets = secret.Secret()
         self.ctx = mp.get_context('spawn')
         self.query = query
@@ -28,10 +30,12 @@ class App():
                              racism_hatred,
                              racism_racist,
                              verbose=False):
-        # analyse the tweets to see if they are racist or polarized
-        # @param racism_hatred: model to analyse tweets for polarized tone
-        # @param racism_racist: model to analyse tweets for racist tone
-        # @param verbose: if True, print the tweets and the results
+        """Analyse the tweets to see if they are racist or polarized
+
+        @param racism_hatred: model to analyse tweets for polarized tone
+        @param racism_racist: model to analyse tweets for racist tone
+        @param verbose: if True, print the tweets and the results
+        """
         time.sleep(10)  # Wait for the sentiment analysis to be start
         retriever_module = retriever.Retriever(self.topic)
         feed = ingestor.Ingestor(self.secrets.bearer_token)
@@ -61,12 +65,13 @@ class App():
                     f"{self.topic}_normal_tweets")
 
     def analyse_user_tweets(self, tweet, racism_racist, limit):
-        # If the tweet was considered as racist, look at the user's tweets
-        # If more than 10% racist tweets of his 50 last tweets, add him to list
-        # @param tweet : the tweet to analyse and retrieve the user from
-        # @param racism_racist : the model to analyse tweets for racist tone
-        # @param limit : the number of tweets to retrieve from the user
+        """If the tweet was considered as racist, look at the user's tweets
+        If more than 10% racist tweets of his 50 last tweets, add him to list
 
+        @param tweet: the tweet to analyse and retrieve the user from
+        @param racism_racist: the model to analyse tweets for racist tone
+        @param limit: the number of tweets to retrieve from the user
+        """
         # Create user_information instance
         user = user_information.User_Information(self.secrets.bearer_token)
         # Get the user's tweets (last 50) and put it in a topic
@@ -93,8 +98,10 @@ class App():
             self.append_dangerous_file(racist_dict)
 
     def append_dangerous_file(self, racist_dict):
-        # Generate a file with the dangerous users and their tweets
-        # @param racist_dict : the dictionary containing user and its tweets
+        """Generate a file with the dangerous users and their tweets
+
+        @param racist_dict: the dictionary containing user and its tweets
+        """
         with open("./dangerous_users.txt", "a+") as file:
             file.write(f"Pseudo to check: {racist_dict['author']}\n")
             file.write("Suspected tweets: \n")
@@ -103,7 +110,8 @@ class App():
             file.write("-------------------\n")
 
     def generate_clouds(self):
-
+        """Generate the wordclouds for the different topics
+        """
         time.sleep(5)
         twitter_mask = np.array(Image.open("img/twitter.jpg"))
 
@@ -155,7 +163,8 @@ class App():
                 figure.canvas.flush_events()
 
     def tweeter_to_kafka(self):
-        # Gather tweets from tweeter and send them to kafka
+        """Gather tweets from tweeter and send them to kafka
+        """
         feed = ingestor.Ingestor(self.secrets.bearer_token)
         feed.get_data_continuously(self.query,
                                    self.nb_tweets,
@@ -164,6 +173,8 @@ class App():
                                    verbose=False)
 
     def run(self):
+        """ Run the program and create threads to analyse tweets
+        """
         try:
             # Start by training the classifier
             print('Loading dataset and training the polarity classifier...')
@@ -191,4 +202,4 @@ class App():
             # Join the threads and close
             process_data_from_tweeter.join()
             process_analyse_racism.join()
-            process_clouds.start()
+            process_clouds.join()
