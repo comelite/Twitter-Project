@@ -166,18 +166,22 @@ class App():
     def run(self):
         try:
             # Start by training the classifier
+            print('Loading dataset and training the polarity classifier...')
             racism_hatred = analyser.Racist("./datasets/hatred_init_en.csv")
+            print('Loading dataset and training the racism classifier...')
             racism_racist = analyser.Racist("./datasets/racist_init_en.csv")
             # Get tweets
             process_data_from_tweeter = self.ctx.Process(
                 target=self.tweeter_to_kafka)
             process_data_from_tweeter.start()
             # Racist analysis
+            print('\nProcessing tweets...')
             process_analyse_racism = self.ctx.Process(
                 target=self.analyse_racism_tweet,
                 args=(racism_hatred, racism_racist))
             process_analyse_racism.start()
             # Clouds
+            print('Processing clouds...')
             process_clouds = self.ctx.Process(
                 target=self.generate_clouds)
             process_clouds.start()

@@ -4,6 +4,7 @@ from nltk import download
 
 if __name__ == "__main__":
 
+    print('\nChecking NLTK libraries...')
     # Download the stopwords from nltk
     download('wordnet')
     download('omw-1.4')
@@ -17,6 +18,7 @@ if __name__ == "__main__":
     # Get a batch of 10 tweets for each pull from twitter API
     nb_tweets = 10
     # Create the application
+    print('\nStarting the application...')
     application = app.App(query, language[:2] + "_" + topic.lower()
                           + "_tweets", language, nb_tweets)
     # Start the application
