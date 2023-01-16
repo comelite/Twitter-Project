@@ -184,11 +184,12 @@ class App():
             racism_racist = analyser.Racist(
                 "./datasets/racist_init_en.csv", verbose=True)
             # Get tweets
+            print('\nRetrieving tweets...')
             process_data_from_tweeter = self.ctx.Process(
                 target=self.tweeter_to_kafka)
             process_data_from_tweeter.start()
             # Racist analysis
-            print('\nProcessing tweets...')
+            print('\nClassifying tweets...')
             process_analyse_racism = self.ctx.Process(
                 target=self.analyse_racism_tweet,
                 args=(racism_hatred, racism_racist))
