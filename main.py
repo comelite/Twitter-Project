@@ -16,7 +16,7 @@ if __name__ == "__main__":
     # Set the language of the tweets
     language = "english"
     # Get a batch of 50 tweets for each pull from twitter API
-    nb_tweets = 50
+    nb_tweets = 10
     # Create the application
     print('\nStarting the application...')
     application = app.App(query, language[:2] + "_" + topic.lower()
